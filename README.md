@@ -1,5 +1,9 @@
-# Step 1: Ensure a sensible version of tensorflow for all nodes
+# Cluster Mini-HowTo
 
-## Using
-tensorflow/tensorflow   latest-gpu   f5ba7a196d56
-## Hence PIN image:
+## Running a job
+
+```
+qsub -q training job.sh
+```
+
+Giving it arguments always through env.
