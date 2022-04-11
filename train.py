@@ -10,20 +10,19 @@ import os
 import sys
 import numpy as np
 
-class cfg:
-    img_input_shape= (64,64,3) # 224,224(224, 224)
-    number_of_classes = 2
-    lr1 = np.random.choice([0.01, 0.001, 0.0001])
-    epochs=np.random.choice([10,25, 50,100])
-    hidden_units = np.random.choice([32,64,128,256,512,1024])
-    dropout = np.random.choice([0.1,0.2,0.5])
+import json
+from types import SimpleNamespace
+
+config = sys.argv[1]
+cfg = json.load(open(config,"r"), object_hook=lambda d: SimpleNamespace(**d))
+cfg.config=os.path.basename(config)
 
 
     
     
 if __name__=="__main__":
-    print("CFG: %s" % (str (cfg.__dict__)))
-
+    json_cfg = json.dumps({x:cfg.__dict__[x] for x in cfg.__dict__ if not x.startswith("_")})
+    print("JSONCFG: %s" % (json_cfg))
     conv = tf.keras.applications.vgg16.VGG16(weights='imagenet',
                                              include_top=False,
                                              input_tensor=None,
@@ -69,6 +68,15 @@ if __name__=="__main__":
     shuffle=True,
     seed=42
     )
+    test_generator = train_datagen.flow_from_directory(
+    directory=r"./firepreview/test/",
+        target_size=(cfg.img_input_shape[0],cfg.img_input_shape[1]),
+    color_mode="rgb",
+    batch_size=32,
+    class_mode="categorical",
+    shuffle=False,
+    seed=42
+    )
     STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
     STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
     model.fit_generator(generator=train_generator,
@@ -77,5 +85,9 @@ if __name__=="__main__":
                     validation_steps=STEP_SIZE_VALID,
                     epochs=cfg.epochs
     )
+    model.save("%s.h5" % (cfg.config))
+    # Evaluate on Testset
 
-    
+    STEPS_TEST=test_generator.n//test_generator.batch_size
+    results = json.dumps(dict(zip(model.metrics_names, model.evaluate(test_generator, steps=STEPS_TEST))))
+    print("TEST:%s" %(results))

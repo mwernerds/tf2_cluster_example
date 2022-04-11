@@ -1,0 +1,8 @@
+{
+"img_input_shape": [64,64,3],
+"number_of_classes": 2,
+"lr1": 0.0001,
+"epochs":1,
+"hidden_units": 512,
+"dropout": 0.1
+}

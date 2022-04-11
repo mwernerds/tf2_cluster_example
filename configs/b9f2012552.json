@@ -1,0 +1,12 @@
+{
+  "img_input_shape": [
+    64,
+    64,
+    3
+  ],
+  "number_of_classes": 2,
+  "lr1": 0.001,
+  "epochs": 10,
+  "hidden_units": 512,
+  "dropout": 0.1
+}
