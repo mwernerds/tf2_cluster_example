@@ -1,0 +1,3 @@
+FROM tensorflow/tensorflow@sha256:3f8f06cdfbc09c54568f191bbc54419b348ecc08dc5e031a53c22c6bba0a252e
+RUN pip3 install Pillow;
+

@@ -1,5 +1,8 @@
 #!/bin/bash
 #PBS -S /bin/bash
+# This wants full node (full IO, full CPU, and full GPU)
+#PBS -l select=1:ncpus=1:mem=10Gb
+#PBS -l place=excl
 #PBS -N trainlog
 #PBS -l walltime=1:00:00
 #PBS -j oe
