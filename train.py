@@ -17,7 +17,6 @@ config = sys.argv[1]
 cfg = json.load(open(config,"r"), object_hook=lambda d: SimpleNamespace(**d))
 cfg.config=os.path.basename(config)
 
-
     
     
 if __name__=="__main__":
@@ -41,9 +40,9 @@ if __name__=="__main__":
     loss_fn = keras.losses.CategoricalCrossentropy() #from_logits=True
     optimizer = keras.optimizers.Adam(learning_rate = cfg.lr1)
     
-    train_acc_metric = keras.metrics.Precision()
+    use_metrics=[]
     print(model.summary())
-    model.compile(optimizer=optimizer, loss = loss_fn, metrics=[train_acc_metric])
+    model.compile(optimizer=optimizer, loss = loss_fn, metrics=use_metrics)
     # data
 
         
@@ -79,15 +78,25 @@ if __name__=="__main__":
     )
     STEP_SIZE_TRAIN=train_generator.n//train_generator.batch_size
     STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
+
+    # Sometimes, your weights will go NaN (e.g., too large LR)
+    # and it is not automatic that the job ends then. But we want to.
+    
+    callbacks = [ keras.callbacks.TerminateOnNaN() ]
+
+    
     model.fit_generator(generator=train_generator,
                     steps_per_epoch=STEP_SIZE_TRAIN,
                     validation_data=valid_generator,
                     validation_steps=STEP_SIZE_VALID,
-                    epochs=cfg.epochs
+                        epochs=cfg.epochs,
+                        callbacks = callbacks
     )
     model.save("%s.h5" % (cfg.config))
     # Evaluate on Testset
-
+    model.compile(optimizer=optimizer, loss = loss_fn, metrics=use_metrics)
+    use_metrics = [keras.metrics.Precision()]
+    
     STEPS_TEST=test_generator.n//test_generator.batch_size
     results = json.dumps(dict(zip(model.metrics_names, model.evaluate(test_generator, steps=STEPS_TEST))))
     print("TEST:%s" %(results))
