@@ -50,7 +50,7 @@ if __name__=="__main__":
     train_datagen = keras.preprocessing.image.ImageDataGenerator(
         rescale=1 / 255.0)
     train_generator = train_datagen.flow_from_directory(
-    directory=r"./firepreview/train/",
+    directory= "./%s/train/" %(cfg.dataset),
         target_size=(cfg.img_input_shape[0],cfg.img_input_shape[1]),
     color_mode="rgb",
     batch_size=32,
@@ -59,7 +59,7 @@ if __name__=="__main__":
     seed=42
     )
     valid_generator = train_datagen.flow_from_directory(
-    directory=r"./firepreview/val/",
+        directory="./%s/val/" %(cfg.dataset),
         target_size=(cfg.img_input_shape[0],cfg.img_input_shape[1]),
     color_mode="rgb",
     batch_size=32,
@@ -68,7 +68,7 @@ if __name__=="__main__":
     seed=42
     )
     test_generator = train_datagen.flow_from_directory(
-    directory=r"./firepreview/test/",
+        directory="./%s/test/" %(cfg.dataset),
         target_size=(cfg.img_input_shape[0],cfg.img_input_shape[1]),
     color_mode="rgb",
     batch_size=32,

@@ -2,3 +2,6 @@ train
 trainlog.*
 firepreview
 logs
+wf_*
+configs/*.json
+wf.tgz
