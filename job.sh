@@ -4,7 +4,7 @@
 #PBS -l select=1:ncpus=1:mem=10Gb
 #PBS -l place=excl
 #PBS -N trainlog
-#PBS -l walltime=00:30:00
+#PBS -l walltime=03:00:00
 #PBS -j oe
 
 # walltime in seconds

@@ -56,4 +56,34 @@ As we want to be able to use [pretrained models](#@pretrained), we will build a 
 For now, we do this by a two-step process: first scaling a part of the spectral information to the [0,1] range for each of the source image channels and then building composites according to literature.
 
 
+# A simple keras script for fine-tuning DNNs
+
+This document is more about how to manage compute resources in ablation studies, where many models and configurations need to
+be reliable processed, all results need to be transparently available, and complex evaluations across all runs need to be performed.
+
+Therefore, we will be very short and dirty on the deep learning part, what we provide is kind-of okay, but there are lots of opportunities of improving the workload code in train.py
+
+Nevertheless, the following aspects of train.py are powerful ideas that you should reflect. For example, the following block
+is used to communicate configuration from job to script:
+```
+import json
+from types import SimpleNamespace
+
+config = sys.argv[1]
+cfg = json.load(open(config,"r"), object_hook=lambda d: SimpleNamespace(**d))
+cfg.config=os.path.basename(config)
+```
+This means that the script does not have a lengthy definition of command line arguments like `--lr=0.01` for a learning rate.
+Instead, all configuration is given as a JSON file. To further improve readability and writeability, we parse this into a
+namespace such that we can access the fields with a `.` instead of brackets. This distinguishes it clearly from most data
+we have. Further, we inject the configuration filename into the configuration and dump it right at the start of the script.
+Should it fail or be a very good result, we can instantly see what has happened from the job's logfile without needing to look up the config file (which might have changed). This adds to full reproducibility as the correctness of the log does not depend on the configuration file not being lost or changed. The log itself is complete.
+
+```
+if __name__=="__main__":
+    json_cfg = json.dumps({x:cfg.__dict__[x] for x in cfg.__dict__ if not x.startswith("_")})
+    print("JSONCFG: %s" % (json_cfg))
+```
+By prefixing the JSON object with JSONCFG:, we can easily extract it using command line tools, more to it later.
+
 
