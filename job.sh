@@ -9,10 +9,14 @@
 
 # walltime in seconds
 
-WALLTIME=$(qstat -f $PBS_JOBID | sed -rn 's/.*Resource_List.walltime = (.*)/\1/p')
-WALLTIME_SECONDS=$(echo "$WALLTIME" | sed -E 's/(.*):(.+):(.+)/\1*3600+\2*60+\3/;s/(.+):(.+)/\1*60+\2/' | bc)
-SLEEPTIME=$(($WALLTIME_SECONDS - 10))
+#WALLTIME=$(qstat -f $PBS_JOBID | sed -rn 's/.*Resource_List.walltime = (.*)/\1/p')
+#WALLTIME_SECONDS=$(echo "$WALLTIME" | sed -E 's/(.*):(.+):(.+)/\1*3600+\2*60+\3/;s/(.+):(.+)/\1*60+\2/' | bc)
+#SLEEPTIME=$(($WALLTIME_SECONDS - 10))
 
+# TODO: add PYTHONUNBUFFERED=1 to the environment to have smoother log processing especially for crashes on docker level
+# like timeouts
+
+SLEEPTIME=1800
 echo "Spawning for $SLEEPTIME/${WALLTIME_SECONDS} seconds"
 
 cd "$PBS_O_WORKDIR/"
