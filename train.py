@@ -94,7 +94,8 @@ if __name__=="__main__":
     )
     model.save("%s.h5" % (cfg.config))
     # Evaluate on Testset
-    use_metrics = [keras.metrics.Precision()]
+    use_metrics = [keras.metrics.Precision(),keras.metrics.Recall()]
+
     model.compile(optimizer=optimizer, loss = loss_fn, metrics=use_metrics)
     
     STEPS_TEST=test_generator.n//test_generator.batch_size
